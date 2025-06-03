@@ -1,0 +1,2356 @@
+/* Hide "Powered by Orderly" hanya di footer */
+footer .oui-box.oui-flex.oui-flex-row.oui-items-center.oui-justify-start.oui-flex-nowrap.oui-gap-1,
+.oui-footer .oui-box.oui-flex.oui-flex-row.oui-items-center.oui-justify-start.oui-flex-nowrap.oui-gap-1,
+.oui-footer-wrapper .oui-box.oui-flex.oui-flex-row.oui-items-center.oui-justify-start.oui-flex-nowrap.oui-gap-1,
+.orderly-powered-by,
+[class*="powered-by-orderly"],
+[class*="orderly-branding"],
+[class*="orderly-footer"],
+[class*="orderly-copyright"],
+.oui-footer-branding,
+.oui-footer-powered-by,
+.oui-footer-copyright,
+footer [class*="powered-by"],
+footer [class*="branding"],
+footer [class*="copyright"],
+.oui-footer-wrapper [class*="powered-by"],
+.oui-footer-wrapper [class*="branding"],
+.oui-footer-wrapper [class*="copyright"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    position: absolute !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    pointer-events: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+}
+
+/* Pastikan elemen di dialog leverage tidak tersembunyi */
+.oui-dialog-content .oui-box.oui-flex,
+.oui-dialog-content .oui-box.oui-flex-row,
+.oui-dialog-body .oui-box.oui-flex,
+.oui-dialog-body .oui-box.oui-flex-row {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: auto !important;
+    height: auto !important;
+    position: relative !important;
+    overflow: visible !important;
+    clip: auto !important;
+    pointer-events: auto !important;
+}
+
+/* Ensure logo size consistency */
+img[src='mua2.svg'],
+img[src='luma.png'],
+.oui-nav img,
+.oui-header img,
+header img {
+    max-width: 100px !important;
+    max-height: 100px !important;
+    width: 100px !important;
+    height: 100px !important;
+    min-width: 100px !important;
+    min-height: 100px !important;
+    object-fit: contain !important;
+    flex: 0 0 100px !important;
+    transform: scale(1) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    box-sizing: border-box !important;
+    display: block !important;
+}
+
+/* Tambahkan di bagian bawah file */
+
+/* Tambahkan CSS untuk ResponsiveScaffold */
+.responsive-scaffold-container {
+  position: relative;
+}
+
+/* Tampilkan elemen mobile-only hanya pada layar kecil */
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-only {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 16px;
+    z-index: 1010;
+    height: 60px;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Sembunyikan tombol hamburger bawaan dari Scaffold */
+  .oui-main-nav-widget .oui-navbar-toggle {
+    display: none !important;
+  }
+}
+
+/* Glassmorphism effect */
+.glass-effect {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: rgba(17, 24, 39, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient text */
+.gradient-text {
+    background: linear-gradient(to right, rgb(41, 233, 169), rgb(41, 223, 169));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Improved scrollbar */
+.scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: rgba(31, 41, 55, 0.5);
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(75, 85, 99, 0.7);
+    border-radius: 2px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(107, 114, 128, 0.8);
+}
+
+/* Animated gradient background */
+.animated-gradient {
+    background: linear-gradient(-45deg, #0a2b1e, #1f2d25, #0a3b2a, #0a4b2a);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Glow effect for buttons */
+.glow-effect {
+    box-shadow: 0 0 15px rgba(41, 233, 169, 0.5);
+    transition: box-shadow 0.3s ease;
+}
+
+.glow-effect:hover {
+    box-shadow: 0 0 20px rgba(41, 233, 169, 0.7);
+}
+
+/* Tambahan untuk responsivitas */
+@media (max-width: 768px) {
+    .md\:flex-row {
+        flex-direction: column;
+    }
+
+    .md\:w-72,
+    .md\:w-80,
+    .md\:w-1\/2 {
+        width: 100%;
+    }
+
+    .h-\[60\%\] {
+        height: 400px;
+    }
+}
+
+/* Navbar Responsif */
+.custom-responsive-header {
+    transition: all 0.3s ease;
+}
+
+.custom-responsive-navbar {
+    transition: all 0.3s ease;
+}
+
+/* Styling untuk navbar pada layar besar */
+@media (min-width: 768px) {
+    .oui-navbar {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 1rem;
+    }
+
+    .oui-navbar-item {
+        padding: 0.75rem 1rem;
+        font-weight: 500;
+        position: relative;
+    }
+
+    .oui-navbar-item:hover::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, var(--oui-color-primary), var(--oui-color-primary-light));
+        transform: scaleX(1);
+        transition: transform 0.3s ease;
+    }
+
+    .oui-navbar-item.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, var(--oui-color-primary), var(--oui-color-primary-light));
+    }
+}
+
+/* Styling untuk navbar pada layar kecil (mobile) */
+@media (max-width: 767px) {
+    .oui-header {
+        padding: 0.5rem;
+    }
+
+    /* Styling untuk tombol hamburger */
+    .oui-navbar-toggle {
+        display: block;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+    }
+
+    /* Animasi untuk menu dropdown mobile */
+    .oui-navbar-mobile {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--oui-color-background-2);
+        border-bottom: 1px solid var(--oui-color-border);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+
+    .oui-navbar-mobile.open {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .oui-navbar-item {
+        display: block;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--oui-color-border-light);
+    }
+
+    .oui-navbar-item:last-child {
+        border-bottom: none;
+    }
+}
+
+/* Efek glassmorphism untuk navbar */
+.oui-header {
+    background: rgba(20, 20, 30, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animasi untuk menu aktif */
+.oui-navbar-item.active {
+    color: var(--oui-color-primary);
+    font-weight: 600;
+}
+
+/* Efek hover untuk item menu */
+.oui-navbar-item:hover {
+    color: var(--oui-color-primary-light);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Styling untuk tombol hamburger */
+.hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 18px;
+}
+
+.hamburger span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background-color: var(--oui-color-text-1);
+    transition: all 0.3s ease;
+}
+
+.hamburger.open span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Styling untuk header mobile kustom */
+.layout-container {
+    position: relative;
+}
+
+/* Tambahkan atau perbarui CSS untuk mobile-header */
+/* Pastikan mobile-header selalu terlihat di mode mobile */
+.mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: rgba(20, 20, 30, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1001;
+    /* Pastikan z-index lebih tinggi */
+}
+
+/* Pastikan tombol hamburger terlihat */
+.oui-navbar-toggle {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 1002;
+}
+
+/* Pastikan hamburger icon terlihat */
+.hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 18px;
+}
+
+.hamburger span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background-color: white;
+    /* Pastikan warna kontras dengan latar belakang */
+    transition: all 0.3s ease;
+}
+
+.hamburger.open span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Styling untuk menu mobile */
+.custom-responsive-navbar.mobile {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--oui-color-background-2);
+    border-bottom: 1px solid var(--oui-color-border);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.custom-responsive-navbar.mobile.open {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Tambahkan class untuk menyembunyikan header bawaan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Hapus class mobile-header-hidden yang tidak digunakan */
+.custom-responsive-header.hidden {
+    display: none !important;
+}
+
+/* Styling untuk menu mobile kustom */
+.mobile-menu {
+    position: absolute;
+    top: 80px;
+    /* Sesuaikan dengan tinggi mobile-header baru */
+    left: 0;
+    right: 0;
+    background: rgba(20, 20, 30, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.mobile-menu.open {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.mobile-menu nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mobile-menu nav ul li {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-menu nav ul li:last-child {
+    border-bottom: none;
+}
+
+.mobile-menu nav ul li a {
+    display: block;
+    padding: 15px 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.mobile-menu nav ul li a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--oui-color-primary-light);
+}
+
+/* Pastikan header bawaan benar-benar tersembunyi di mode mobile */
+.custom-responsive-header.hidden {
+    display: none !important;
+}

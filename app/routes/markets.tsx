@@ -1,5 +1,6 @@
+// Ganti import Scaffold dengan ResponsiveScaffold
 import { Outlet } from "@remix-run/react";
-import { Scaffold } from "@orderly.network/ui-scaffold";
+import ResponsiveScaffold from "@/components/ResponsiveScaffold";
 import config from "@/utils/config";
 import { useNav } from "@/hooks/useNav";
 
@@ -7,17 +8,15 @@ export default function MarketsPage() {
   const { onRouteChange } = useNav();
 
   return (
-    <Scaffold
+    <ResponsiveScaffold
       mainNavProps={{
         ...config.scaffold.mainNavProps,
         initialMenu: "/markets",
       }}
       footerProps={config.scaffold.footerProps}
-      routerAdapter={{
-        onRouteChange,
-      }}
+      currentPath="/markets"
     >
       <Outlet />
-    </Scaffold>
+    </ResponsiveScaffold>
   );
 }
