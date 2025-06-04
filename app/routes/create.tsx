@@ -1,62 +1,55 @@
 import { useState } from "react";
-import { Link, useParams, useNavigate } from "@remix-run/react";
-import { Scaffold } from "@orderly.network/ui-scaffold";
-import { ActionFunction, json } from "@remix-run/node";
+import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import ResponsiveScaffold from "@/components/ResponsiveScaffold";
 import config from "@/utils/config";
 import { useNav } from "@/hooks/useNav";
-// Ganti import Scaffold dengan ResponsiveScaffold
-import ResponsiveScaffold from "@/components/ResponsiveScaffold";
+// Menggunakan useWallet dari Solana wallet adapter sebagai pengganti useWalletConnector
+import { useWallet } from "@solana/wallet-adapter-react";
+import { Transaction, PublicKey, Keypair } from "@solana/web3.js";
+import { Connection } from "@solana/web3.js";
+import bs58 from "bs58";
 
-// Definisikan tipe untuk hasil respons API create-token (sukses)
+// Komponen Button sederhana
+const Button = ({ onClick, disabled, className, children }) => {
+  return (
+    <button onClick={onClick} disabled={disabled} className={className}>
+      {children}
+    </button>
+  );
+};
+
 interface CreateTokenResult {
+  tokenAddress: string;
   initSig: string;
   mintSig: string;
   revokeSig: string;
-  tokenAddress: string;
   feeConfig?: {
+    transferFeeAuthority: string;
     feeBasisPoints: number;
-    maxFee: number;
-  };
+    maxFee: string;
+  } | null;
 }
 
-// Definisikan tipe untuk respons API yang gagal
-interface ErrorResponse {
-  error: string;
+interface TokenCreationData {
+  transaction: string; // Base64 encoded transaction
+  mint: string; // Mint address
+  mintSecretKey: string; // Secret key for the mint (only for example)
+  mintLen: number;
+  mintLamports: string;
+  tokenMetadata: any;
+  TAX_FEE_BASIS_POINTS: number;
+  MAX_FEE: string;
+  mintAmount: string;
 }
 
-// Action function untuk menangani POST request
-export const action: ActionFunction = async ({ request }) => {
-  const formData = await request.formData();
-  const tokenName = formData.get("tokenName");
-  const tokenSymbol = formData.get("tokenSymbol");
-  const totalSupply = formData.get("totalSupply");
-  const decimals = formData.get("decimals");
-  const uri = formData.get("uri");
+interface FormErrors {
+  tokenName: string;
+  tokenSymbol: string;
+  totalSupply: string;
+  decimals: string;
+}
 
-  try {
-    // Implementasi logika pembuatan token di sini
-    // Contoh respons sukses
-    return json({
-      initSig: "initSigHash",
-      mintSig: "mintSigHash",
-      revokeSig: "revokeSigHash",
-      tokenAddress: "newTokenAddress",
-      feeConfig: {
-        feeBasisPoints: 500, // 5%
-        maxFee: 5000000, // 0.05 token
-      },
-    });
-  } catch (error) {
-    return json({ error: error instanceof Error ? error.message : "An error occurred" }, { status: 400 });
-  }
-};
-
-const Create = () => {
-  const { onRouteChange } = useNav();
-  const navigate = useNavigate();
-  const params = useParams();
-
-  // State untuk form Create Token
+const CreateTokenContent = () => {
   const [tokenName, setTokenName] = useState("");
   const [tokenSymbol, setTokenSymbol] = useState("");
   const [totalSupply, setTotalSupply] = useState("");
@@ -65,40 +58,386 @@ const Create = () => {
   const [result, setResult] = useState<CreateTokenResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState<FormErrors>({
+    tokenName: "",
+    tokenSymbol: "",
+    totalSupply: "",
+    decimals: "",
+  });
+
+  // Menggunakan wallet dari Solana wallet adapter
+  const wallet = useWallet();
+
+  const validateForm = () => {
+    const errors: FormErrors = {
+      tokenName: tokenName ? "" : "Nama token wajib diisi",
+      tokenSymbol: tokenSymbol ? "" : "Simbol token wajib diisi",
+      totalSupply:
+        totalSupply && !isNaN(Number(totalSupply)) && Number(totalSupply) > 0
+          ? ""
+          : "Total supply harus angka positif",
+      decimals:
+        decimals && !isNaN(Number(decimals)) && Number(decimals) >= 0
+          ? ""
+          : "Decimals harus angka non-negatif",
+    };
+    setFormErrors(errors);
+    return !Object.values(errors).some((error) => error);
+  };
+
+  // Koneksi ke Solana Devnet
+  const connection = new Connection("https://api.devnet.solana.com", "confirmed");
 
   const handleCreateToken = async () => {
+    if (!validateForm()) return;
+
     setLoading(true);
     setError(null);
     setResult(null);
 
     try {
-      const formData = new FormData();
-      formData.append("tokenName", tokenName);
-      formData.append("tokenSymbol", tokenSymbol);
-      formData.append("totalSupply", totalSupply);
-      formData.append("decimals", decimals);
-      formData.append("uri", uri);
+      // Periksa apakah wallet tersedia
+      if (!wallet) {
+        setError("Wallet tidak tersedia. Pastikan provider wallet telah diinisialisasi.");
+        setLoading(false);
+        return;
+      }
 
-      const response = await fetch("/create", {
+      // Periksa apakah wallet terhubung
+      if (!wallet.connected) {
+        setError("Wallet belum terhubung. Silakan hubungkan wallet Anda terlebih dahulu.");
+        setLoading(false);
+        return;
+      }
+
+      // Periksa apakah public key tersedia
+      if (!wallet.publicKey) {
+        setError("Tidak dapat mengakses public key wallet. Silakan coba lagi.");
+        setLoading(false);
+        return;
+      }
+
+      // Langkah 1: Dapatkan data untuk pembuatan token dari server
+      const prepareResponse = await fetch("/api/create-token", {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tokenName,
+          tokenSymbol,
+          totalSupply,
+          decimals,
+          uri,
+          walletAddress: wallet.publicKey.toString(),
+        }),
       });
 
-      const data: CreateTokenResult | ErrorResponse = await response.json();
-      if (response.ok) {
-        setResult(data as CreateTokenResult);
-      } else {
-        setError((data as ErrorResponse).error || "Failed to create token");
+      let tokenData: TokenCreationData;
+      try {
+        const responseData = await prepareResponse.json();
+
+        if (!prepareResponse.ok) {
+          setError(responseData.error || "Gagal mempersiapkan pembuatan token.");
+          setLoading(false);
+          return;
+        }
+
+        tokenData = responseData;
+        console.log("Token creation data received:", tokenData);
+      } catch (error) {
+        console.error("Error parsing API response:", error);
+        setError(`Error parsing API response: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        setLoading(false);
+        return;
       }
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+
+      // Langkah 2: Rekonstruksi transaksi dari data yang diterima
+      let transaction;
+      try {
+        console.log("Reconstructing transaction from base64 data");
+        const transactionBuffer = Buffer.from(tokenData.transaction, "base64");
+        transaction = Transaction.from(transactionBuffer);
+        console.log("Transaction reconstructed successfully");
+      } catch (error) {
+        console.error("Error reconstructing transaction:", error);
+        setError(`Error reconstructing transaction: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        setLoading(false);
+        return;
+      }
+
+      // Langkah 3: Rekonstruksi keypair mint dari secret key
+      let mintKeypair, mintPublicKey;
+      try {
+        console.log("Reconstructing mint keypair from secret key");
+        const mintSecretKeyBytes = bs58.decode(tokenData.mintSecretKey);
+        mintKeypair = Keypair.fromSecretKey(mintSecretKeyBytes);
+        mintPublicKey = new PublicKey(tokenData.mint);
+        console.log("Mint keypair reconstructed successfully, public key:", mintPublicKey.toString());
+      } catch (error) {
+        console.error("Error reconstructing mint keypair:", error);
+        setError(`Error reconstructing mint keypair: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        setLoading(false);
+        return;
+      }
+
+      // Langkah 4: Tandatangani transaksi
+      try {
+        console.log("Getting recent blockhash");
+        const { blockhash } = await connection.getLatestBlockhash();
+        transaction.recentBlockhash = blockhash;
+        transaction.feePayer = wallet.publicKey;
+        console.log("Partially signing transaction with mint keypair");
+        transaction.partialSign(mintKeypair);
+
+        // Gunakan signTransaction dari Solana wallet adapter
+        console.log("Requesting wallet signature");
+        const signedTransaction = await wallet.signTransaction(transaction);
+        console.log("Transaction signed successfully");
+
+        // Langkah 5: Kirim transaksi ke jaringan
+        console.log("Sending transaction to network");
+        const signature = await connection.sendRawTransaction(signedTransaction.serialize());
+        console.log("Transaction sent with signature:", signature);
+
+        // Tunggu konfirmasi transaksi
+        console.log("Waiting for transaction confirmation");
+        const confirmation = await connection.confirmTransaction(signature, "confirmed");
+        console.log("Transaction confirmed:", confirmation);
+      } catch (error) {
+        console.error("Error during transaction signing or sending:", error);
+        setError(`Error during transaction processing: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        setLoading(false);
+        return;
+      }
+
+      // Langkah 6: Buat hasil untuk ditampilkan
+      const result: CreateTokenResult = {
+        tokenAddress: `https://solscan.io/token/${mintPublicKey.toString()}?cluster=devnet`,
+        initSig: `https://solscan.io/tx/${signature}?cluster=devnet`,
+        mintSig: `https://solscan.io/tx/${signature}?cluster=devnet`,
+        revokeSig: `https://solscan.io/tx/${signature}?cluster=devnet`,
+      };
+
+      setResult(result);
+      setTokenName("");
+      setTokenSymbol("");
+      setTotalSupply("");
+      setUri("");
+    } catch (err) {
+      console.error("Error creating token:", err);
+      setError(
+        err instanceof Error
+          ? `Terjadi kesalahan: ${err.message}`
+          : "Terjadi kesalahan tidak terduga. Silakan coba lagi."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    // Pada bagian return, ganti Scaffold dengan ResponsiveScaffold
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900 text-white flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl bg-slate-800/90 rounded-2xl shadow-2xl p-8 animate-fade-in">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500">
+            Buat Token Baru di Solana
+          </h1>
+          <p className="text-slate-300 mt-2 text-sm md:text-base">
+            Ciptakan token kustom Anda dengan mudah dan cepat
+          </p>
+        </div>
+
+        {!wallet ? (
+          <div className="text-center p-6 bg-slate-900/50 rounded-xl border border-slate-700/50">
+            <p className="text-slate-300 mb-4">Wallet tidak tersedia. Pastikan Anda telah menginisialisasi wallet provider.</p>
+          </div>
+        ) : !wallet.connected ? (
+          <div className="text-center p-6 bg-slate-900/50 rounded-xl border border-slate-700/50">
+            <p className="text-slate-300 mb-4">Silakan hubungkan wallet Anda untuk membuat token</p>
+            <Button
+              onClick={async () => {
+                try {
+                  // Periksa apakah ada wallet yang tersedia
+                  if (wallet.wallets && wallet.wallets.length > 0) {
+                    // Pilih wallet pertama yang tersedia
+                    await wallet.select(wallet.wallets[0].adapter.name);
+                    // Kemudian hubungkan
+                    await wallet.connect();
+                  } else {
+                    console.error("Tidak ada wallet yang tersedia");
+                    alert("Tidak ada wallet yang tersedia. Pastikan Anda telah menginstal wallet Solana seperti Phantom.");
+                  }
+                } catch (error) {
+                  console.error("Error connecting wallet:", error);
+                  alert(`Error menghubungkan wallet: ${error instanceof Error ? error.message : 'Unknown error'}`);
+                }
+              }}
+              className="py-3 px-6 bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-300"
+            >
+              Hubungkan Wallet
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-6 bg-slate-900/50 p-6 rounded-xl border border-slate-700/50">
+            <h2 className="text-xl font-semibold text-cyan-300">Detail Token</h2>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-200">Nama Token</label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🏷️</span>
+                <input
+                  type="text"
+                  value={tokenName}
+                  onChange={(e) => setTokenName(e.target.value)}
+                  placeholder="Contoh: MyToken"
+                  className={`w-full pl-10 p-3 rounded-lg bg-slate-700/80 border ${formErrors.tokenName ? "border-red-500" : "border-slate-600"} text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all`}
+                />
+                {formErrors.tokenName && <p className="text-red-400 text-xs">{formErrors.tokenName}</p>}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-200">Simbol Token</label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🔤</span>
+                <input
+                  type="text"
+                  value={tokenSymbol}
+                  onChange={(e) => setTokenSymbol(e.target.value)}
+                  placeholder="Contoh: MTK"
+                  className={`w-full pl-10 p-3 rounded-lg bg-slate-700/80 border ${formErrors.tokenSymbol ? "border-red-500" : "border-slate-600"} text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all`}
+                />
+                {formErrors.tokenSymbol && <p className="text-red-400 text-xs">{formErrors.tokenSymbol}</p>}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-200">Total Supply</label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">💰</span>
+                <input
+                  type="text"
+                  value={totalSupply}
+                  onChange={(e) => setTotalSupply(e.target.value)}
+                  placeholder="Contoh: 1000000"
+                  className={`w-full pl-10 p-3 rounded-lg bg-slate-700/80 border ${formErrors.totalSupply ? "border-red-500" : "border-slate-600"} text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all`}
+                />
+                {formErrors.totalSupply && <p className="text-red-400 text-xs">{formErrors.totalSupply}</p>}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-200">Decimals</label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🔢</span>
+                <input
+                  type="text"
+                  value={decimals}
+                  onChange={(e) => setDecimals(e.target.value)}
+                  placeholder="Contoh: 9"
+                  className={`w-full pl-10 p-3 rounded-lg bg-slate-700/80 border ${formErrors.decimals ? "border-red-500" : "border-slate-600"} text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all`}
+                />
+                {formErrors.decimals && <p className="text-red-400 text-xs">{formErrors.decimals}</p>}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-200">Metadata URI (opsional)</label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🌐</span>
+                <input
+                  type="text"
+                  value={uri}
+                  onChange={(e) => setUri(e.target.value)}
+                  placeholder="https://example.com/metadata.json"
+                  className="w-full pl-10 p-3 rounded-lg bg-slate-700/80 border border-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all"
+                />
+              </div>
+            </div>
+
+            <Button
+              onClick={handleCreateToken}
+              disabled={loading}
+              className="w-full py-3 bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Membuat Token...</span>
+                </div>
+              ) : (
+                "Buat Token"
+              )}
+            </Button>
+          </div>
+        )}
+
+        {result && (
+          <div className="mt-6 bg-slate-900/50 p-6 rounded-xl border border-green-500/50 animate-fade-in">
+            <h2 className="text-xl font-semibold text-green-400 flex items-center gap-2">
+              <CheckCircle className="w-6 h-6" /> Token Berhasil Dibuat!
+            </h2>
+            <div className="mt-4 space-y-4">
+              <div className="p-3 bg-slate-800/50 rounded-lg">
+                <p className="text-slate-300 text-sm">Alamat Token:</p>
+                <a
+                  href={result.tokenAddress}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-cyan-400 break-all font-mono hover:underline"
+                >
+                  {result.tokenAddress}
+                </a>
+              </div>
+              <div className="p-3 bg-slate-800/50 rounded-lg">
+                <p className="text-slate-300 text-sm">Signature Transaksi:</p>
+                <a
+                  href={result.initSig}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-cyan-400 break-all font-mono hover:underline"
+                >
+                  {result.initSig}
+                </a>
+              </div>
+              <p className="text-slate-300 text-sm mt-4 italic">
+                Token berhasil dibuat dan ditandatangani menggunakan wallet Anda.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="mt-6 bg-red-900/30 p-4 rounded-xl border border-red-500/50 animate-fade-in">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-red-400 font-medium">Error</p>
+                <p className="text-red-300 text-sm mt-1">{error}</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <style jsx>{`
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.5s ease-out;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default function CreateTokenPage() {
+  const { onRouteChange } = useNav();
+
+  return (
     <ResponsiveScaffold
       mainNavProps={{
         ...config.scaffold.mainNavProps,
@@ -107,400 +446,7 @@ const Create = () => {
       footerProps={config.scaffold.footerProps}
       currentPath="/create"
     >
-      <div style={{ padding: "20px" }}>
-        {/* Header dengan Gradien */}
-        <div style={{
-          background: "linear-gradient(135deg, rgba(30, 40, 50, 0.9) 0%, rgba(10, 20, 30, 0.95) 100%)",
-          borderRadius: "16px",
-          padding: "24px",
-          marginBottom: "24px",
-          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
-          border: "1px solid rgba(255, 255, 255, 0.05)",
-        }}>
-          <h1
-            style={{
-              fontSize: "28px",
-              fontWeight: "bold",
-              color: "white",
-              marginBottom: "8px",
-              textAlign: "center",
-            }}
-          >
-            Buat Token Baru di Solana
-          </h1>
-          <p style={{
-            color: "rgba(255, 255, 255, 0.7)",
-            textAlign: "center",
-            fontSize: "16px",
-          }}>
-            Buat token kustom Anda sendiri dengan beberapa klik
-          </p>
-          
-          {/* Tombol Navigasi ke AddLp */}
-          <div style={{ display: "flex", justifyContent: "center", marginTop: "16px" }}>
-            <Link
-              to="/addlp"
-              style={{
-                display: "inline-block",
-                padding: "12px 24px",
-                borderRadius: "12px",
-                background: "linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)",
-                color: "white",
-                textDecoration: "none",
-                textAlign: "center",
-                fontWeight: "600",
-                fontSize: "15px",
-                transition: "all 0.3s",
-                boxShadow: "0 4px 12px rgba(46, 204, 113, 0.3)",
-              }}
-            >
-              Tambahkan Liquidity Pool
-            </Link>
-          </div>
-        </div>
-
-        {/* Form Create Token dengan Desain yang Ditingkatkan */}
-        <div
-          style={{
-            background: "rgba(30, 40, 50, 0.95)",
-            borderRadius: "16px",
-            padding: "24px",
-            marginBottom: "24px",
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)",
-            border: "1px solid rgba(255, 255, 255, 0.05)",
-          }}
-        >
-          <h2
-            style={{
-              fontSize: "22px",
-              fontWeight: "600",
-              color: "white",
-              marginBottom: "20px",
-              borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-              paddingBottom: "12px",
-            }}
-          >
-            Detail Token
-          </h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            {/* Input Nama Token */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <label
-                style={{
-                  color: "rgba(255, 255, 255, 0.9)",
-                  fontWeight: "500",
-                  fontSize: "14px",
-                }}
-              >
-                Nama Token:
-              </label>
-              <input
-                type="text"
-                value={tokenName}
-                onChange={(e) => setTokenName(e.target.value)}
-                placeholder="Contoh: MyToken"
-                style={{
-                  border: "none",
-                  padding: "12px",
-                  borderRadius: "12px",
-                  backgroundColor: "rgba(40, 50, 60, 0.9)",
-                  color: "white",
-                  width: "100%",
-                  fontSize: "16px",
-                  outline: "none",
-                  transition: "background-color 0.3s",
-                }}
-                onFocus={(e) => e.target.style.backgroundColor = "rgba(50, 60, 70, 0.9)"}
-                onBlur={(e) => e.target.style.backgroundColor = "rgba(40, 50, 60, 0.9)"}
-              />
-            </div>
-
-            {/* Input Simbol Token */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <label
-                style={{
-                  color: "rgba(255, 255, 255, 0.9)",
-                  fontWeight: "500",
-                  fontSize: "14px",
-                }}
-              >
-                Simbol Token:
-              </label>
-              <input
-                type="text"
-                value={tokenSymbol}
-                onChange={(e) => setTokenSymbol(e.target.value)}
-                placeholder="Contoh: MTK"
-                style={{
-                  border: "none",
-                  padding: "12px",
-                  borderRadius: "12px",
-                  backgroundColor: "rgba(40, 50, 60, 0.9)",
-                  color: "white",
-                  width: "100%",
-                  fontSize: "16px",
-                  outline: "none",
-                }}
-                onFocus={(e) => e.target.style.backgroundColor = "rgba(50, 60, 70, 0.9)"}
-                onBlur={(e) => e.target.style.backgroundColor = "rgba(40, 50, 60, 0.9)"}
-              />
-            </div>
-
-            {/* Input Total Supply */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <label
-                style={{
-                  color: "rgba(255, 255, 255, 0.9)",
-                  fontWeight: "500",
-                  fontSize: "14px",
-                }}
-              >
-                Total Supply:
-              </label>
-              <input
-                type="text"
-                value={totalSupply}
-                onChange={(e) => setTotalSupply(e.target.value)}
-                placeholder="Contoh: 1000000"
-                style={{
-                  border: "none",
-                  padding: "12px",
-                  borderRadius: "12px",
-                  backgroundColor: "rgba(40, 50, 60, 0.9)",
-                  color: "white",
-                  width: "100%",
-                  fontSize: "16px",
-                  outline: "none",
-                }}
-                onFocus={(e) => e.target.style.backgroundColor = "rgba(50, 60, 70, 0.9)"}
-                onBlur={(e) => e.target.style.backgroundColor = "rgba(40, 50, 60, 0.9)"}
-              />
-            </div>
-
-            {/* Input Decimals */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <label
-                style={{
-                  color: "rgba(255, 255, 255, 0.9)",
-                  fontWeight: "500",
-                  fontSize: "14px",
-                }}
-              >
-                Decimals:
-              </label>
-              <input
-                type="text"
-                value={decimals}
-                onChange={(e) => setDecimals(e.target.value)}
-                placeholder="Contoh: 9"
-                style={{
-                  border: "none",
-                  padding: "12px",
-                  borderRadius: "12px",
-                  backgroundColor: "rgba(40, 50, 60, 0.9)",
-                  color: "white",
-                  width: "100%",
-                  fontSize: "16px",
-                  outline: "none",
-                }}
-                onFocus={(e) => e.target.style.backgroundColor = "rgba(50, 60, 70, 0.9)"}
-                onBlur={(e) => e.target.style.backgroundColor = "rgba(40, 50, 60, 0.9)"}
-              />
-            </div>
-
-            {/* Input URI */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <label
-                style={{
-                  color: "rgba(255, 255, 255, 0.9)",
-                  fontWeight: "500",
-                  fontSize: "14px",
-                }}
-              >
-                Metadata URI (opsional):
-              </label>
-              <input
-                type="text"
-                value={uri}
-                onChange={(e) => setUri(e.target.value)}
-                placeholder="https://example.com/metadata.json"
-                style={{
-                  border: "none",
-                  padding: "12px",
-                  borderRadius: "12px",
-                  backgroundColor: "rgba(40, 50, 60, 0.9)",
-                  color: "white",
-                  width: "100%",
-                  fontSize: "16px",
-                  outline: "none",
-                }}
-                onFocus={(e) => e.target.style.backgroundColor = "rgba(50, 60, 70, 0.9)"}
-                onBlur={(e) => e.target.style.backgroundColor = "rgba(40, 50, 60, 0.9)"}
-              />
-            </div>
-
-            {/* Tombol Create Token */}
-            <button
-              onClick={handleCreateToken}
-              disabled={loading}
-              style={{
-                marginTop: "16px",
-                padding: "14px 24px",
-                borderRadius: "12px",
-                border: "none",
-                background: "linear-gradient(135deg, #3498db 0%, #2980b9 100%)",
-                color: "white",
-                fontWeight: "600",
-                fontSize: "16px",
-                cursor: loading ? "not-allowed" : "pointer",
-                opacity: loading ? 0.7 : 1,
-                transition: "all 0.3s",
-              }}
-            >
-              {loading ? "Membuat Token..." : "Buat Token"}
-            </button>
-          </div>
-        </div>
-
-        {/* Hasil Pembuatan Token */}
-        {result && (
-          <div
-            style={{
-              background: "rgba(30, 40, 50, 0.95)",
-              borderRadius: "16px",
-              padding: "24px",
-              marginBottom: "24px",
-              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.5)",
-              border: "1px solid rgba(255, 255, 255, 0.05)",
-            }}
-          >
-            <h2
-              style={{
-                fontSize: "22px",
-                fontWeight: "600",
-                color: "white",
-                marginBottom: "20px",
-                borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-                paddingBottom: "12px",
-              }}
-            >
-              Token Berhasil Dibuat!
-            </h2>
-            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              <div>
-                <p style={{ color: "rgba(255, 255, 255, 0.7)", marginBottom: "4px" }}>
-                  Alamat Token:
-                </p>
-                <p
-                  style={{
-                    color: "#3498db",
-                    wordBreak: "break-all",
-                    padding: "8px 12px",
-                    background: "rgba(20, 30, 40, 0.5)",
-                    borderRadius: "8px",
-                    fontFamily: "monospace",
-                  }}
-                >
-                  {result.tokenAddress}
-                </p>
-              </div>
-
-              <div>
-                <p style={{ color: "rgba(255, 255, 255, 0.7)", marginBottom: "4px" }}>
-                  Signature Inisialisasi:
-                </p>
-                <p
-                  style={{
-                    color: "#3498db",
-                    wordBreak: "break-all",
-                    padding: "8px 12px",
-                    background: "rgba(20, 30, 40, 0.5)",
-                    borderRadius: "8px",
-                    fontFamily: "monospace",
-                  }}
-                >
-                  {result.initSig}
-                </p>
-              </div>
-
-              <div>
-                <p style={{ color: "rgba(255, 255, 255, 0.7)", marginBottom: "4px" }}>
-                  Signature Minting:
-                </p>
-                <p
-                  style={{
-                    color: "#3498db",
-                    wordBreak: "break-all",
-                    padding: "8px 12px",
-                    background: "rgba(20, 30, 40, 0.5)",
-                    borderRadius: "8px",
-                    fontFamily: "monospace",
-                  }}
-                >
-                  {result.mintSig}
-                </p>
-              </div>
-
-              {result.feeConfig && (
-                <div>
-                  <p style={{ color: "rgba(255, 255, 255, 0.7)", marginBottom: "4px" }}>
-                    Konfigurasi Fee:
-                  </p>
-                  <p
-                    style={{
-                      color: "#3498db",
-                      wordBreak: "break-all",
-                      padding: "8px 12px",
-                      background: "rgba(20, 30, 40, 0.5)",
-                      borderRadius: "8px",
-                      fontFamily: "monospace",
-                    }}
-                  >
-                    {result.feeConfig.feeBasisPoints / 100}% (Max: {result.feeConfig.maxFee})
-                  </p>
-                </div>
-              )}
-
-              <Link
-                to={`https://solscan.io/token/${result.tokenAddress}?cluster=devnet`}
-                style={{
-                  display: "inline-block",
-                  marginTop: "16px",
-                  padding: "12px 20px",
-                  borderRadius: "12px",
-                  background: "rgba(52, 152, 219, 0.2)",
-                  color: "#3498db",
-                  textDecoration: "none",
-                  textAlign: "center",
-                  fontWeight: "500",
-                  transition: "background 0.3s",
-                }}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Lihat di Solscan
-              </Link>
-            </div>
-          </div>
-        )}
-
-        {/* Pesan Error */}
-        {error && (
-          <div
-            style={{
-              background: "rgba(231, 76, 60, 0.2)",
-              borderRadius: "12px",
-              padding: "16px",
-              marginBottom: "24px",
-              border: "1px solid rgba(231, 76, 60, 0.3)",
-            }}
-          >
-            <p style={{ color: "#e74c3c", margin: 0 }}>{error}</p>
-          </div>
-        )}
-      </div>
+      <CreateTokenContent />
     </ResponsiveScaffold>
   );
-};
-
-export default Create;
+}
