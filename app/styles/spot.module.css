@@ -1,0 +1,12 @@
+.spotContainer {
+    background-image: url('/bg.png');
+    /* Asumsi bg.png di public/ */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}

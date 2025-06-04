@@ -1,0 +1,528 @@
+.swapContainer {
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 24px;
+  padding: 24px;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(108, 126, 225, 0.2);
+}
+
+.swapHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.swapHeader h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.swapSettings {
+  background: none;
+  border: none;
+  color: #6c7ee1;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.tokenInput {
+  background-color: rgba(30, 30, 44, 0.6);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(108, 126, 225, 0.1);
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.tokenInput:hover {
+  border-color: rgba(108, 126, 225, 0.3);
+  box-shadow: 0 0 15px rgba(108, 126, 225, 0.1);
+}
+
+.tokenInputHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.tokenInputHeader span:first-child {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.tokenInputHeader span:last-child {
+  color: rgba(108, 126, 225, 0.8);
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.tokenInputRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tokenInputContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tokenInputContent input {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 32px;
+  font-weight: 600;
+  width: 60%;
+  outline: none;
+  padding: 0;
+}
+
+.tokenInputRow input {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 32px;
+  font-weight: 600;
+  width: 60%;
+  outline: none;
+  padding: 0;
+}
+
+.tokenSelector {
+  display: flex;
+  align-items: center;
+  background-color: rgba(50, 50, 70, 0.6);
+  border-radius: 16px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(108, 126, 225, 0.2);
+}
+
+.tokenSelector:hover {
+  background-color: rgba(70, 70, 90, 0.8);
+  border-color: rgba(108, 126, 225, 0.4);
+  box-shadow: 0 0 10px rgba(108, 126, 225, 0.2);
+}
+
+.tokenSelector img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.tokenSelector span {
+  color: white;
+  font-weight: 600;
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.dropdownArrow {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+}
+
+.swapIconContainer {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  height: 0;
+  top: -8px;
+  margin-bottom: -8px;
+}
+
+.swapIcon {
+  background: linear-gradient(135deg, #6c7ee1, #9baeff);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 2;
+  box-shadow: 0 4px 12px rgba(108, 126, 225, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.swapIcon:hover {
+  transform: rotate(180deg);
+  box-shadow: 0 6px 16px rgba(108, 126, 225, 0.6);
+}
+
+.swapButton {
+  background: linear-gradient(135deg, #6c7ee1, #9baeff);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 18px;
+  width: 100%;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 24px;
+  box-shadow: 0 4px 12px rgba(108, 126, 225, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.swapButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5a6ac9, #8a9dff);
+  box-shadow: 0 6px 16px rgba(108, 126, 225, 0.5);
+  transform: translateY(-2px);
+}
+
+.swapButton:disabled {
+  background: linear-gradient(135deg, #3a3a4c, #4a4a5c);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.tokenDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: rgba(20, 20, 30, 0.95);
+  border-radius: 20px;
+  padding: 20px;
+  z-index: 10;
+  max-height: 350px;
+  overflow-y: auto;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(108, 126, 225, 0.2);
+  margin-top: 8px;
+}
+
+.tokenDropdown input {
+  background-color: rgba(50, 50, 70, 0.6);
+  border: 1px solid rgba(108, 126, 225, 0.2);
+  border-radius: 16px;
+  padding: 16px;
+  width: 100%;
+  color: white;
+  margin-bottom: 16px;
+  outline: none;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.tokenDropdown input:focus {
+  border-color: rgba(108, 126, 225, 0.5);
+  box-shadow: 0 0 10px rgba(108, 126, 225, 0.2);
+}
+
+.tokenDropdownActions {
+  margin-bottom: 12px;
+}
+
+.tokenDropdownActions button {
+  background-color: #6c7ee1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.tokenDropdownActions button:hover {
+  background-color: #5a6ac9;
+}
+
+.tokenItem {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.tokenItem:hover {
+  background-color: rgba(108, 126, 225, 0.1);
+}
+
+.tokenItem.selected {
+  background-color: rgba(108, 126, 225, 0.2);
+}
+
+.tokenItem img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.tokenItem div {
+  display: flex;
+  flex-direction: column;
+}
+
+.tokenItem div div:first-child {
+  color: white;
+  font-weight: 500;
+}
+
+.tokenItem div div:last-child {
+  color: #a0a0a0;
+  font-size: 12px;
+}
+
+/* Page Header Styles */
+.pageHeader {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.pageHeader h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  background: linear-gradient(90deg, #6c7ee1, #9baeff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pageHeader p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+}
+
+/* Tab Navigation Styles */
+.tabNavigation {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+  background-color: rgba(30, 30, 44, 0.4);
+  border-radius: 12px;
+  padding: 6px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tabButton {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.tabButton:hover {
+  color: white;
+  background-color: rgba(108, 126, 225, 0.1);
+}
+
+.activeTab {
+  background-color: rgba(108, 126, 225, 0.2);
+  color: white;
+  box-shadow: 0 2px 8px rgba(108, 126, 225, 0.2);
+}
+
+/* Settings Dialog Styles */
+.settingsDialog {
+  background-color: rgba(30, 30, 44, 0.95);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(108, 126, 225, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.settingsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 12px;
+}
+
+.settingsHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.closeButton:hover {
+  color: white;
+}
+
+.settingsContent {
+  margin-bottom: 16px;
+}
+
+.settingsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.settingsRow label {
+  color: white;
+  font-size: 14px;
+}
+
+.slippageOptions {
+  display: flex;
+  gap: 8px;
+}
+
+.slippageOption {
+  background-color: rgba(50, 50, 70, 0.6);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.slippageOption:hover {
+  background-color: rgba(70, 70, 90, 0.6);
+}
+
+.slippageOption.active {
+  border-color: #6c7ee1;
+  background-color: rgba(108, 126, 225, 0.2);
+}
+
+.customSlippage {
+  display: flex;
+  align-items: center;
+  background-color: rgba(50, 50, 70, 0.6);
+  border-radius: 8px;
+  padding: 6px 12px;
+  width: 80px;
+}
+
+.customSlippage input {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  text-align: right;
+}
+
+.customSlippage span {
+  color: white;
+  font-size: 14px;
+  margin-left: 4px;
+}
+
+.settingsButton {
+  background: none;
+  border: none;
+  color: #6c7ee1;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.resultSuccess {
+  background-color: rgba(46, 196, 137, 0.1);
+  border: 1px solid rgba(46, 196, 137, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  color: #2ec489;
+  margin-top: 16px;
+}
+
+.resultError {
+  background-color: rgba(255, 86, 86, 0.1);
+  border: 1px solid rgba(255, 86, 86, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  color: #ff5656;
+  margin-top: 16px;
+}
+
+.txId {
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.txId a {
+  color: #6c7ee1;
+  text-decoration: none;
+}
+
+.txId a:hover {
+  text-decoration: underline;
+}
+
+.priceInfo {
+  margin-top: 16px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: space-between;
+  background-color: rgba(30, 30, 44, 0.4);
+  border-radius: 16px;
+  padding: 12px 16px;
+  border: 1px solid rgba(108, 126, 225, 0.1);
+}
+
+.routeInfo {
+  background-color: rgba(30, 30, 44, 0.6);
+  border-radius: 16px;
+  padding: 16px;
+  margin-top: 16px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(108, 126, 225, 0.1);
+}
+
+.routeInfoRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.routeInfoRow:last-child {
+  margin-bottom: 0;
+}
+
+.routeInfoValue {
+  color: white;
+}

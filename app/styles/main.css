@@ -54,14 +54,14 @@ img[src*='or.svg'],
 .oui-nav img,
 .oui-header img,
 header img {
-    max-width: 140px !important;
-    max-height: 140px !important;
-    width: 140px !important;
-    height: 140px !important;
-    min-width: 140px !important;
-    min-height: 140px !important;
+    max-width: 120px !important;
+    max-height: 120px !important;
+    width: 120px !important;
+    height: 120px !important;
+    min-width: 120px !important;
+    min-height: 120px !important;
     object-fit: contain !important;
-    flex: 0 0 140px !important;
+    flex: 0 0 120px !important;
     transform: scale(1) !important;
     padding: 0 !important;
     margin: 0 !important;

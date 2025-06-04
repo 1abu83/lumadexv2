@@ -14,6 +14,7 @@ import "./styles/index.css";
 import "./styles/main.css";
 import "./styles/navbar-responsive.css";
 import "./styles/portfolio.css";
+import "./styles/spot.css"
 
 
 export function Layout({ children }: { children: React.ReactNode }) {

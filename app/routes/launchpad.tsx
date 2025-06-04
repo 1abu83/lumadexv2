@@ -1,169 +1,257 @@
-import { useParams } from "@remix-run/react";
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { Connection, PublicKey } from "@solana/web3.js";
-import ResponsiveScaffold from "@/components/ResponsiveScaffold"; // Impor di sini
+import { useState, useEffect, useMemo } from 'react';
+import ResponsiveScaffold from "@/components/ResponsiveScaffold";
+import styles from '../styles/swap.module.css';
+import launchpadStyles from '../styles/launchpad.module.css';
+import { getQuote, getSwapTransaction, getTokensList } from '../utils/jupiterApi';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { PublicKey, Transaction } from '@solana/web3.js';
+import { FaArrowDown, FaExchangeAlt, FaCog } from 'react-icons/fa';
 import config from "@/utils/config";
 import { useNav } from "@/hooks/useNav";
-import "../styles/main.css";
 
-const TokenDropdown = ({
-  show,
-  setShow,
-  search,
-  setSearch,
-  selectedMint,
-  setSelectedMint,
-  tokens,
-  customMint,
-  setCustomMint,
-  setError,
-  setTokenList,
-}) => {
-  const validateMintAddress = useCallback((address) => {
-    try {
-      if (!address || address.length < 32 || address.length > 44) return false;
-      new PublicKey(address);
-      return true;
-    } catch {
-      return false;
-    }
-  }, []);
-
-  const addCustomToken = useCallback(() => {
-    if (!validateMintAddress(customMint)) {
-      setError("Invalid mint address format");
-      return;
-    }
-    const existingToken = tokens.find((t) => t.address === customMint);
-    if (existingToken) {
-      setSelectedMint(customMint);
-      setShow(false);
-      setCustomMint("");
-      setError(null);
-      return;
-    }
-    const newToken = {
-      address: customMint,
-      symbol: customMint.substring(0, 6) + "...",
-      name: "Custom Token",
-      logoURI: "https://via.placeholder.com/24",
-      decimals: 6,
-    };
-    setTokenList((prev) => [...prev, newToken]);
-    setSelectedMint(customMint);
-    setShow(false);
-    setCustomMint("");
-    setError(null);
-  }, [customMint, tokens, setSelectedMint, setShow, setCustomMint, setError, setTokenList, validateMintAddress]);
-
-  const filteredTokens = useMemo(() => {
-    if (validateMintAddress(search)) {
-      const exists = tokens.find((t) => t.address === search);
-      if (!exists)
-        return [
-          { address: search, symbol: "Custom", name: "Custom Token (Pending)", logoURI: "https://via.placeholder.com/24", decimals: 6 },
-          ...tokens.slice(0, 50),
-        ];
-    }
-    return tokens
-      .filter(
-        (token) =>
-          token.name?.toLowerCase().includes(search.toLowerCase()) ||
-          token.symbol?.toLowerCase().includes(search.toLowerCase()) ||
-          token.address?.toLowerCase().includes(search.toLowerCase())
-      )
-      .slice(0, 50);
-  }, [search, tokens, validateMintAddress]);
-
-  return show ? (
-    <div className="token-dropdown">
-      <input
-        type="text"
-        placeholder="Search token or paste mint address"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        aria-label="Search token or paste mint address"
-      />
-      <div className="token-dropdown-actions">
-        {validateMintAddress(search) && !tokens.find((t) => t.address === search) && (
-          <button onClick={addCustomToken} aria-label="Add custom mint address">
-            Add Custom Mint: {search.substring(0, 6)}...
-          </button>
-        )}
+// Memoized token list component to prevent unnecessary re-renders
+const TokenItem = ({ token, isSelected, onClick }) => {
+  return (
+    <div
+      className={`${styles.tokenItem} ${isSelected ? styles.selected : ''}`}
+      onClick={() => onClick(token)}
+    >
+      <img src={token.logoURI || 'https://via.placeholder.com/24'} alt={token.symbol} />
+      <div>
+        <div>{token.symbol}</div>
+        <div>{token.name}</div>
       </div>
-      {filteredTokens.map((token) => (
-        <div
-          key={token.address}
-          className={`token-item ${selectedMint === token.address ? "selected" : ""}`}
-          onClick={() => {
-            setSelectedMint(token.address);
-            setShow(false);
-          }}
-        >
-          <img
-            src={token.logoURI || "https://via.placeholder.com/24"}
-            alt={token.symbol || "Token"}
-            width={24}
-            height={24}
-            onError={(e) => (e.currentTarget.src = "https://via.placeholder.com/24")}
-          />
-          <div>
-            <div>{token.symbol || "Unknown"}</div>
-            <div>{token.name || "Custom Token"}</div>
-          </div>
-        </div>
-      ))}
     </div>
-  ) : null;
+  );
 };
 
-export default function LaunchpadPage() {
-  const { onRouteChange } = useNav();
-  const connection = useMemo(() => new Connection("https://api.devnet.solana.com", "confirmed"), []);
-  const [activeTab, setActiveTab] = useState("swap");
-  const [isLoading, setIsLoading] = useState(true);
-  const [publicKey, setPublicKey] = useState(null);
-  const [connected, setConnected] = useState(false);
+// Memoized token dropdown component
+const TokenDropdown = ({ isFrom, show, onClose, tokenList, selectedMint, onSelectToken, customMint, onCustomMintChange }) => {
+  // Filter tokens based on search input
+  const filteredTokens = useMemo(() => {
+    if (!show) return [];
+    const searchTerm = (isFrom ? customMint : customMint).toLowerCase();
+    return tokenList.filter(token =>
+      token.symbol.toLowerCase().includes(searchTerm) ||
+      token.name.toLowerCase().includes(searchTerm) ||
+      token.address.toLowerCase().includes(searchTerm)
+    ).slice(0, 20); // Limit to 20 tokens for better performance
+  }, [show, tokenList, customMint, isFrom]);
 
-  // State untuk token dan swap
-  const [fromMint, setFromMint] = useState("");
-  const [toMint, setToMint] = useState("");
-  const [fromAmount, setFromAmount] = useState("");
-  const [toAmount, setToAmount] = useState("");
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  if (!show) return null;
+
+  return (
+    <div className={styles.tokenDropdown}>
+      <input
+        type="text"
+        placeholder="Search token or paste address"
+        value={isFrom ? customMint : customMint}
+        onChange={(e) => onCustomMintChange(e.target.value, isFrom)}
+      />
+      <div className={styles.tokenList}>
+        {filteredTokens.map((token) => (
+          <TokenItem
+            key={token.address}
+            token={token}
+            isSelected={token.address === selectedMint}
+            onClick={(token) => onSelectToken(token, isFrom)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default function Launchpad() {
+  const [activeTab, setActiveTab] = useState('swap');
+  const [fromMint, setFromMint] = useState('So11111111111111111111111111111111111111112'); // SOL
+  const [toMint, setToMint] = useState('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'); // USDC
+  const [fromAmount, setFromAmount] = useState('0.1');
+  const [toAmount, setToAmount] = useState('0');
   const [tokenList, setTokenList] = useState([]);
-  const [showFromTokens, setShowFromTokens] = useState(false);
-  const [showToTokens, setShowToTokens] = useState(false);
-  const [fromTokenSearch, setFromTokenSearch] = useState("");
-  const [toTokenSearch, setToTokenSearch] = useState("");
-  const [customFromMint, setCustomFromMint] = useState("");
-  const [customToMint, setCustomToMint] = useState("");
+  const [showFromDropdown, setShowFromDropdown] = useState(false);
+  const [showToDropdown, setShowToDropdown] = useState(false);
+  const [customFromMint, setCustomFromMint] = useState('');
+  const [customToMint, setCustomToMint] = useState('');
+  const [swapResult, setSwapResult] = useState(null);
+  const [swapError, setSwapError] = useState(null);
+  const [quoteData, setQuoteData] = useState(null);
+  const [isSwapping, setIsSwapping] = useState(false);
+  const [slippage, setSlippage] = useState(0.5); // Default slippage 0.5%
+  const [showSettings, setShowSettings] = useState(false);
+  const [isLoadingTokens, setIsLoadingTokens] = useState(false);
 
-  // Simulasi data token
+  // State for Add Liquidity
+  const [liquidityTokenA, setLiquidityTokenA] = useState('');
+  const [liquidityTokenB, setLiquidityTokenB] = useState('');
+  const [amountTokenA, setAmountTokenA] = useState('');
+  const [amountTokenB, setAmountTokenB] = useState('');
+
+  const { connection } = useConnection();
+  const wallet = useWallet();
+  const { onRouteChange } = useNav();
+
+  // Memoized token lookup
+  const tokenLookup = useMemo(() => {
+    const lookup = {};
+    tokenList.forEach(token => {
+      lookup[token.address] = token;
+    });
+    return lookup;
+  }, [tokenList]);
+
+  // Fetch tokens from Jupiter API
+  const fetchTokens = async () => {
+    if (isLoadingTokens) return;
+
+    try {
+      setIsLoadingTokens(true);
+      const tokens = await getTokensList();
+      setTokenList(tokens);
+    } catch (error) {
+      console.error('Error fetching tokens:', error);
+    } finally {
+      setIsLoadingTokens(false);
+    }
+  };
+
+  // Get swap quote with debounce
   useEffect(() => {
-    setTokenList([
-      {
-        address: "So11111111111111111111111111111111111111112",
-        symbol: "SOL",
-        name: "Solana",
-        logoURI: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png",
-        decimals: 9,
-      },
-      {
-        address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-        symbol: "USDC",
-        name: "USD Coin",
-        logoURI: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png",
-        decimals: 6,
-      },
-    ]);
-    setIsLoading(false);
+    if (!tokenList.length || !fromMint || !toMint || !fromAmount || parseFloat(fromAmount) <= 0) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        const quote = await getQuote({
+          inputMint: fromMint,
+          outputMint: toMint,
+          amount: parseFloat(fromAmount) * 10 ** 9,
+          slippage: slippage,
+        });
+        setQuoteData(quote);
+        // Ensure outAmount is a valid number before division
+        if (quote && typeof quote.outAmount === 'number') {
+          setToAmount((quote.outAmount / 10 ** 6).toString());
+        } else {
+          setToAmount('0');
+        }
+      } catch (error) {
+        console.error('Error getting quote:', error);
+        setToAmount('0');
+        setQuoteData(null);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [fromMint, toMint, fromAmount, slippage, tokenList]);
+
+  // Fetch tokens on mount
+  useEffect(() => {
+    fetchTokens();
   }, []);
 
-  const signTransaction = async (transaction) => {
-    return transaction;
+  // Handle custom token input change
+  const handleCustomMintChange = (value, isFrom) => {
+    if (isFrom) {
+      setCustomFromMint(value);
+    } else {
+      setCustomToMint(value);
+    }
+  };
+
+  // Handle token selection
+  const selectToken = (token, isFrom) => {
+    if (isFrom) {
+      setFromMint(token.address);
+      setShowFromDropdown(false);
+      setCustomFromMint('');
+    } else {
+      setToMint(token.address);
+      setShowToDropdown(false);
+      setCustomToMint('');
+    }
+  };
+
+  // Handle custom token input
+  const handleCustomToken = (isFrom) => {
+    try {
+      const mintAddress = isFrom ? customFromMint : customToMint;
+      new PublicKey(mintAddress); // Validate mint address
+      if (isFrom) {
+        setFromMint(mintAddress);
+        setShowFromDropdown(false);
+        setCustomFromMint('');
+      } else {
+        setToMint(mintAddress);
+        setShowToDropdown(false);
+        setCustomToMint('');
+      }
+    } catch (error) {
+      alert('Invalid mint address');
+    }
+  };
+
+  // Swap tokens position
+  const swapTokens = () => {
+    const tempMint = fromMint;
+    const tempAmount = fromAmount;
+    setFromMint(toMint);
+    setToMint(tempMint);
+    // Ensure toAmount is a valid string
+    setFromAmount(typeof toAmount === 'number' ? toAmount.toString() : toAmount || '0');
+    setToAmount(tempAmount);
+  };
+
+  // Handle swap
+  const handleSwap = async () => {
+    if (!wallet.connected) {
+      setSwapError('Please connect your wallet');
+      return;
+    }
+    if (!quoteData) {
+      setSwapError('No quote available for swap');
+      return;
+    }
+
+    setIsSwapping(true);
+    setSwapResult(null);
+    setSwapError(null);
+
+    try {
+      const swapTx = await getSwapTransaction({
+        quoteResponse: quoteData,
+        userPublicKey: wallet.publicKey.toString(),
+        slippage: slippage,
+      });
+
+      const transaction = Transaction.from(Buffer.from(swapTx.swapTransaction, 'base64'));
+      const signature = await wallet.sendTransaction(transaction, connection);
+
+      setSwapResult({
+        signature,
+        inputAmount: fromAmount,
+        outputAmount: typeof toAmount === 'number' ? toAmount : parseFloat(toAmount) || 0,
+        inputToken: tokenLookup[fromMint]?.symbol || fromMint,
+        outputToken: tokenLookup[toMint]?.symbol || toMint,
+      });
+    } catch (error) {
+      console.error('Swap error:', error);
+      setSwapError(error.message || 'Failed to swap tokens');
+    } finally {
+      setIsSwapping(false);
+    }
+  };
+
+  // Dummy Add Liquidity Handler
+  const handleAddLiquidity = () => {
+    if (!wallet.connected) {
+      alert('Connect wallet first');
+      return;
+    }
+    if (!liquidityTokenA || !liquidityTokenB || !amountTokenA || !amountTokenB) {
+      alert('Fill all fields');
+      return;
+    }
+    alert('This feature requires integration with Saber or Raydium SDK.');
   };
 
   return (
@@ -175,214 +263,342 @@ export default function LaunchpadPage() {
       footerProps={config.scaffold.footerProps}
       currentPath="/launchpad"
     >
-      <div className="launchpad-container">
-        {/* Header */}
-        <div className="launchpad-header">
+      <div className={launchpadStyles.launchpadContainer}>
+        <div className={styles.pageHeader}>
           <h1>Launchpad</h1>
           <p>Swap, add liquidity, and launch tokens on Solana</p>
         </div>
 
         {/* Tab Navigation */}
-        <div className="launchpad-tabs">
+        <div className={styles.tabNavigation}>
           <button
-            onClick={() => setActiveTab("swap")}
-            className={activeTab === "swap" ? "active" : ""}
+            className={`${styles.tabButton} ${activeTab === 'swap' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('swap')}
           >
             Swap
           </button>
           <button
-            onClick={() => setActiveTab("liquidity")}
-            className={activeTab === "liquidity" ? "active" : ""}
+            className={`${styles.tabButton} ${activeTab === 'liquidity' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('liquidity')}
           >
-            Liquidity
+            Add Liquidity
           </button>
           <button
-            onClick={() => setActiveTab("launch")}
-            className={activeTab === "launch" ? "active" : ""}
+            className={`${styles.tabButton} ${activeTab === 'launch' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('launch')}
           >
             Launch Token
           </button>
         </div>
 
-        {/* Swap Interface */}
-        {activeTab === "swap" && (
-          <div className="swap-interface">
-            <h2>Swap Tokens</h2>
-            {/* From Token */}
-            <div className="token-input">
-              <label>From</label>
-              <div className="token-input-row">
+        {/* Swap Tab */}
+        {activeTab === 'swap' && (
+          <div className={styles.swapContainer}>
+            <div className={styles.swapHeader}>
+              <h2>Swap</h2>
+              <button
+                className={styles.settingsButton}
+                onClick={() => setShowSettings(!showSettings)}
+              >
+                <FaCog />
+              </button>
+            </div>
+
+            {showSettings && (
+              <div className={styles.settingsDialog}>
+                <div className={styles.settingsHeader}>
+                  <h3>Settings</h3>
+                  <button
+                    className={styles.closeButton}
+                    onClick={() => setShowSettings(false)}
+                  >
+                    ×
+                  </button>
+                </div>
+                <div className={styles.settingsContent}>
+                  <div className={styles.settingItem}>
+                    <label>Slippage Tolerance</label>
+                    <div className={styles.slippageOptions}>
+                      <div
+                        className={`${styles.slippageOption} ${slippage === 0.1 ? styles.selectedSlippage : ''}`}
+                        onClick={() => setSlippage(0.1)}
+                      >
+                        0.1%
+                      </div>
+                      <div
+                        className={`${styles.slippageOption} ${slippage === 0.5 ? styles.selectedSlippage : ''}`}
+                        onClick={() => setSlippage(0.5)}
+                      >
+                        0.5%
+                      </div>
+                      <div
+                        className={`${styles.slippageOption} ${slippage === 1.0 ? styles.selectedSlippage : ''}`}
+                        onClick={() => setSlippage(1.0)}
+                      >
+                        1.0%
+                      </div>
+                      <div className={styles.customSlippage}>
+                        <input
+                          type="number"
+                          value={slippage !== 0.1 && slippage !== 0.5 && slippage !== 1.0 ? slippage : ''}
+                          onChange={(e) => setSlippage(parseFloat(e.target.value) || 0.5)}
+                          placeholder="Custom"
+                        />
+                        <span>%</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className={styles.tokenInput}>
+              <div className={styles.tokenInputHeader}>
+                <span>You pay</span>
+                {wallet.connected && <span>Balance: 0.00</span>}
+              </div>
+              <div className={styles.tokenInputContent}>
                 <input
-                  type="text"
+                  type="number"
                   value={fromAmount}
                   onChange={(e) => setFromAmount(e.target.value)}
                   placeholder="0.0"
                 />
                 <div
-                  className="token-selector"
-                  onClick={() => setShowFromTokens(!showFromTokens)}
+                  className={styles.tokenSelector}
+                  onClick={() => setShowFromDropdown(!showFromDropdown)}
                 >
-                  {fromMint ? (
-                    <>
-                      <img
-                        src={
-                          tokenList.find((t) => t.address === fromMint)?.logoURI ||
-                          "https://via.placeholder.com/24"
-                        }
-                        alt="Token"
-                        width={20}
-                        height={20}
-                      />
-                      <span>
-                        {tokenList.find((t) => t.address === fromMint)?.symbol ||
-                          fromMint.substring(0, 6) + "..."}
-                      </span>
-                    </>
-                  ) : (
-                    <span>Select Token</span>
-                  )}
-                  <span className="dropdown-arrow">▼</span>
+                  <img
+                    src={tokenLookup[fromMint]?.logoURI || 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'}
+                    alt="Token"
+                  />
+                  <span>{tokenLookup[fromMint]?.symbol || 'SOL'}</span>
+                  <span className={styles.dropdownArrow}>▼</span>
                 </div>
               </div>
               <TokenDropdown
-                show={showFromTokens}
-                setShow={setShowFromTokens}
-                search={fromTokenSearch}
-                setSearch={setFromTokenSearch}
+                isFrom={true}
+                show={showFromDropdown}
+                onClose={() => setShowFromDropdown(false)}
+                tokenList={tokenList}
                 selectedMint={fromMint}
-                setSelectedMint={setFromMint}
-                tokens={tokenList}
+                onSelectToken={selectToken}
                 customMint={customFromMint}
-                setCustomMint={setCustomFromMint}
-                setError={setError}
-                setTokenList={setTokenList}
+                onCustomMintChange={handleCustomMintChange}
               />
             </div>
 
-            {/* Swap Icon */}
-            <div className="swap-icon-container">
-              <div
-                className="swap-icon"
-                onClick={() => {
-                  setFromMint(toMint);
-                  setToMint(fromMint);
-                  setFromAmount(toAmount);
-                  setToAmount(fromAmount);
-                }}
-              >
-                <span>↓↑</span>
+            <div className={styles.swapIconContainer} onClick={swapTokens}>
+              <div className={styles.swapIcon}>
+                <FaArrowDown />
               </div>
             </div>
 
-            {/* To Token */}
-            <div className="token-input">
-              <label>To</label>
-              <div className="token-input-row">
+            <div className={styles.tokenInput}>
+              <div className={styles.tokenInputHeader}>
+                <span>You receive</span>
+                {wallet.connected && <span>Balance: 0.00</span>}
+              </div>
+              <div className={styles.tokenInputContent}>
                 <input
-                  type="text"
+                  type="number"
                   value={toAmount}
-                  onChange={(e) => setToAmount(e.target.value)}
+                  readOnly
                   placeholder="0.0"
                 />
                 <div
-                  className="token-selector"
-                  onClick={() => setShowToTokens(!showToTokens)}
+                  className={styles.tokenSelector}
+                  onClick={() => setShowToDropdown(!showToDropdown)}
                 >
-                  {toMint ? (
-                    <>
-                      <img
-                        src={
-                          tokenList.find((t) => t.address === toMint)?.logoURI ||
-                          "https://via.placeholder.com/24"
-                        }
-                        alt="Token"
-                        width={20}
-                        height={20}
-                      />
-                      <span>
-                        {tokenList.find((t) => t.address === toMint)?.symbol ||
-                          toMint.substring(0, 6) + "..."}
-                      </span>
-                    </>
-                  ) : (
-                    <span>Select Token</span>
-                  )}
-                  <span className="dropdown-arrow">▼</span>
+                  <img
+                    src={tokenLookup[toMint]?.logoURI || 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png'}
+                    alt="Token"
+                  />
+                  <span>{tokenLookup[toMint]?.symbol || 'USDC'}</span>
+                  <span className={styles.dropdownArrow}>▼</span>
                 </div>
               </div>
               <TokenDropdown
-                show={showToTokens}
-                setShow={setShowToTokens}
-                search={toTokenSearch}
-                setSearch={setToTokenSearch}
+                isFrom={false}
+                show={showToDropdown}
+                onClose={() => setShowToDropdown(false)}
+                tokenList={tokenList}
                 selectedMint={toMint}
-                setSelectedMint={setToMint}
-                tokens={tokenList}
+                onSelectToken={selectToken}
                 customMint={customToMint}
-                setCustomMint={setCustomToMint}
-                setError={setError}
-                setTokenList={setTokenList}
+                onCustomMintChange={handleCustomMintChange}
               />
             </div>
 
-            {/* Swap Button */}
-            <button
-              className="swap-button"
-              disabled={!fromMint || !toMint || !fromAmount || loading || !connected}
-              onClick={() => {
-                setLoading(true);
-                setTimeout(() => {
-                  setLoading(false);
-                  setResult({
-                    success: true,
-                    message: "Swap successful!",
-                    txId: "5KKsT6UcR5pBrxkMBHzz4nEfXNGMjBUvESn8S2vFqoZspS6cGMgp1JAfAUCuTMTdMTYjP1DnJzh7YCwgLNMJoGBs",
-                  });
-                }, 2000);
-              }}
-            >
-              {loading ? "Processing..." : !connected ? "Connect Wallet" : "Swap"}
-            </button>
-
-            {/* Result or Error */}
-            {result && (
-              <div className={result.success ? "result-success" : "result-error"}>
-                {result.message}
-                {result.txId && (
-                  <div className="tx-id">
-                    Transaction ID:{" "}
-                    <a
-                      href={`https://solscan.io/tx/${result.txId}?cluster=devnet`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {result.txId.substring(0, 8)}...{result.txId.substring(result.txId.length - 8)}
-                    </a>
-                  </div>
-                )}
+            {quoteData && (
+              <div className={styles.priceInfo}>
+                <div>Price: 1 {tokenLookup[fromMint]?.symbol || 'SOL'} = {parseFloat(fromAmount) > 0 ? (parseFloat(toAmount) / parseFloat(fromAmount)).toFixed(6) : '0.00'} {tokenLookup[toMint]?.symbol || 'USDC'}</div>
+                <div>Slippage Tolerance: {slippage}%</div>
               </div>
             )}
 
-            {error && <div className="result-error">{error}</div>}
+            {quoteData && quoteData.routePlan && (
+              <div className={styles.routeInfo}>
+                <div className={styles.routeInfoRow}>
+                  <span>Route</span>
+                  <span className={styles.routeInfoValue}>
+                    {quoteData.routePlan.map((route, index) => {
+                      const tokenSymbol = tokenLookup[route.tokenMint]?.symbol || route.tokenMint.slice(0, 4) + '...';
+                      return index === 0 ? tokenSymbol : ` → ${tokenSymbol}`;
+                    })}
+                  </span>
+                </div>
+                <div className={styles.routeInfoRow}>
+                  <span>Price Impact</span>
+                  <span className={styles.routeInfoValue}>{quoteData.priceImpactPct ? (quoteData.priceImpactPct * 100).toFixed(2) + '%' : 'Unknown'}</span>
+                </div>
+              </div>
+            )}
+
+            <button
+              className={styles.swapButton}
+              onClick={() => {
+                if (!wallet.connected) {
+                  try {
+                    wallet.select('Phantom'); // Try to select Phantom wallet by default
+                    setTimeout(() => {
+                      wallet.connect().catch(err => console.error('Wallet connection error:', err));
+                    }, 100);
+                  } catch (err) {
+                    console.error('Wallet selection error:', err);
+                    // If selection fails, try connecting directly which should show the wallet selection modal
+                    wallet.connect().catch(err => console.error('Wallet connection error:', err));
+                  }
+                } else {
+                  handleSwap();
+                }
+              }}
+              disabled={!wallet.connected ? false : (isSwapping || !quoteData)}
+            >
+              {!wallet.connected ? 'Connect Wallet' : isSwapping ? 'Swapping...' : 'Swap'}
+            </button>
+
+            {swapResult && (
+              <div className={styles.resultSuccess}>
+                Swap successful! Swapped {swapResult.inputAmount} {swapResult.inputToken} for {swapResult.outputAmount.toFixed(6)} {swapResult.outputToken}
+                <div className={styles.txId}>
+                  <a href={`https://explorer.solana.com/tx/${swapResult.signature}?cluster=devnet`} target="_blank" rel="noopener noreferrer">
+                    View transaction
+                  </a>
+                </div>
+              </div>
+            )}
+            {swapError && (
+              <div className={styles.resultError}>
+                {swapError}
+              </div>
+            )}
           </div>
         )}
 
-        {/* Liquidity Interface */}
-        {activeTab === "liquidity" && (
-          <div className="interface-section">
-            <h2>Add Liquidity</h2>
-            <p>Coming soon...</p>
+        {/* Add Liquidity Tab */}
+        {activeTab === 'liquidity' && (
+          <div className={styles.swapContainer}>
+            <h2 className={styles.liquidityTitle}>Initial liquidity</h2>
+
+            {/* Pool Model Selection */}
+            <div className={styles.poolModelSelector}>
+              <button className={styles.poolModelButton + ' ' + styles.activePoolModel}>CPMM</button>
+              <button className={styles.poolModelButton}>AMM v4</button>
+            </div>
+
+            {/* Base Token Input */}
+            <div className={styles.tokenInput}>
+              <div className={styles.tokenInputHeader}>
+                <span>Base token</span>
+                <div>
+                  <button className={styles.percentButton}>50%</button>
+                  <button className={styles.maxButton}>Max</button>
+                </div>
+              </div>
+              <div className={styles.tokenInputContent}>
+                <div
+                  className={styles.tokenSelector}
+                  onClick={() => setShowFromDropdown(!showFromDropdown)}
+                >
+                  <span>Select Token</span>
+                  <span className={styles.dropdownArrow}>▼</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Add Token Button */}
+            <div className={styles.addTokenButtonContainer}>
+              <button className={styles.addTokenButton}>+</button>
+            </div>
+
+            {/* Quote Token Input */}
+            <div className={styles.tokenInput}>
+              <div className={styles.tokenInputHeader}>
+                <span>Quote token</span>
+                <div>
+                  <button className={styles.percentButton}>50%</button>
+                  <button className={styles.maxButton}>Max</button>
+                </div>
+              </div>
+              <div className={styles.tokenInputContent}>
+                <div className={styles.tokenSelector}>
+                  <img
+                    src="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png"
+                    alt="SOL"
+                  />
+                  <span>SOL</span>
+                  <span className={styles.dropdownArrow}>▼</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Initial Price Input */}
+            <div className={styles.formGroup}>
+              <div className={styles.tokenInputHeader}>
+                <span>Initial price</span>
+                <span className={styles.infoIcon}>ⓘ</span>
+              </div>
+              <div className={styles.priceInputContainer}>
+                <input
+                  type="text"
+                  className={styles.priceInput}
+                  placeholder="0.0"
+                />
+                <span className={styles.priceUnit}>SOL/</span>
+              </div>
+            </div>
+
+            {/* Fee Tier Selection */}
+            <div className={styles.formGroup}>
+              <div className={styles.tokenInputHeader}>
+                <span>Fee Tier</span>
+                <span className={styles.infoIcon}>ⓘ</span>
+              </div>
+              <div className={styles.feeTierSelector}>
+                <div className={styles.feeTierValue}>
+                  0.25 %
+                  <span className={styles.dropdownArrow}>▼</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Initialize Button */}
+            <button className={styles.swapButton} onClick={handleAddLiquidity}>
+              Initialize Liquidity Pool
+            </button>
           </div>
         )}
 
-        {/* Launch Token Interface */}
-        {activeTab === "launch" && (
-          <div className="interface-section">
+        {/* Launch Token Tab */}
+        {activeTab === 'launch' && (
+          <div className={styles.swapContainer}>
             <h2>Launch New Token</h2>
-            <p>Coming soon...</p>
+            <p>This feature will be implemented in future updates.</p>
           </div>
         )}
       </div>
     </ResponsiveScaffold>
   );
 }
+
