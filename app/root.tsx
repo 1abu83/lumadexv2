@@ -58,6 +58,26 @@ export function Layout({ children }: { children: React.ReactNode }) {
           el.style.visibility = 'visible';
           el.style.opacity = '1';
         });
+        
+        // Fix logo visibility
+        function fixLogo() {
+          // Check for logo in navbar
+          const navbarLogos = document.querySelectorAll('.oui-navbar-brand img, .oui-navbar img');
+          navbarLogos.forEach(logo => {
+            if (!logo.src || logo.src.includes('orderly-logo')) {
+              logo.src = '/lu.svg';
+              logo.style.display = 'block';
+              logo.style.visibility = 'visible';
+              logo.style.opacity = '1';
+              logo.style.maxWidth = '100px';
+              logo.style.maxHeight = '100px';
+            }
+          });
+        }
+        
+        fixLogo();
+        // Run logo fix periodically
+        setInterval(fixLogo, 1000);
       }
 
       window.addEventListener('load', hidePoweredBy);

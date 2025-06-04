@@ -49,17 +49,19 @@ footer [class*="copyright"],
 /* Ensure logo size consistency */
 img[src='mua2.svg'],
 img[src='luma.png'],
+img[src='/or.svg'],
+img[src*='or.svg'],
 .oui-nav img,
 .oui-header img,
 header img {
-    max-width: 100px !important;
-    max-height: 100px !important;
-    width: 100px !important;
-    height: 100px !important;
-    min-width: 100px !important;
-    min-height: 100px !important;
+    max-width: 140px !important;
+    max-height: 140px !important;
+    width: 140px !important;
+    height: 140px !important;
+    min-width: 140px !important;
+    min-height: 140px !important;
     object-fit: contain !important;
-    flex: 0 0 100px !important;
+    flex: 0 0 140px !important;
     transform: scale(1) !important;
     padding: 0 !important;
     margin: 0 !important;
@@ -72,30 +74,30 @@ header img {
 
 /* Tambahkan CSS untuk ResponsiveScaffold */
 .responsive-scaffold-container {
-  position: relative;
+    position: relative;
 }
 
 /* Tampilkan elemen mobile-only hanya pada layar kecil */
 .mobile-only {
-  display: none;
+    display: none;
 }
 
 @media (max-width: 767px) {
-  .mobile-only {
-    display: block;
-    position: fixed;
-    top: 0;
-    right: 16px;
-    z-index: 1010;
-    height: 60px;
-    display: flex;
-    align-items: center;
-  }
-  
-  /* Sembunyikan tombol hamburger bawaan dari Scaffold */
-  .oui-main-nav-widget .oui-navbar-toggle {
-    display: none !important;
-  }
+    .mobile-only {
+        display: block;
+        position: fixed;
+        top: 0;
+        right: 16px;
+        z-index: 1010;
+        height: 60px;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Sembunyikan tombol hamburger bawaan dari Scaffold */
+    .oui-main-nav-widget .oui-navbar-toggle {
+        display: none !important;
+    }
 }
 
 /* Glassmorphism effect */
