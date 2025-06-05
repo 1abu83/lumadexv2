@@ -1,3 +1,4 @@
+
 /* Hide "Powered by Orderly" hanya di footer */
 footer .oui-box.oui-flex.oui-flex-row.oui-items-center.oui-justify-start.oui-flex-nowrap.oui-gap-1,
 .oui-footer .oui-box.oui-flex.oui-flex-row.oui-items-center.oui-justify-start.oui-flex-nowrap.oui-gap-1,
@@ -71,6 +72,54 @@ header img {
 }
 
 /* Tambahkan di bagian bawah file */
+
+/* Reset CSS untuk modal connect wallet */ 
+.oui-dialog.oui-dialog-content[id^="radix-"] {
+  box-sizing: border-box !important;
+  max-width: 400px !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+}
+
+.oui-dialog.oui-dialog-content[id^="radix-"] *,
+.oui-dialog.oui-wallet-connect-dialog *, 
+.oui-dialog.oui-wallet-selector-dialog *, 
+.oui-dialog.oui-wallet-modal * { 
+  box-sizing: border-box !important; 
+  margin: 0 !important; 
+  padding: 0 !important; 
+} 
+
+.oui-dialog.oui-dialog-content[id^="radix-"] .oui-dialog-body,
+.oui-dialog.oui-wallet-connect-dialog .oui-dialog-content, 
+.oui-dialog.oui-wallet-selector-dialog .oui-dialog-content, 
+.oui-dialog.oui-wallet-modal .oui-dialog-content { 
+  padding: 24px !important; 
+} 
+
+.oui-dialog.oui-dialog-content[id^="radix-"] .oui-dialog-title,
+.oui-dialog.oui-wallet-connect-dialog .oui-dialog-title, 
+.oui-dialog.oui-wallet-selector-dialog .oui-dialog-title, 
+.oui-dialog.oui-wallet-modal .oui-dialog-title { 
+  margin-bottom: 16px !important; 
+  font-size: 18px !important; 
+}
+
+/* Perbaikan untuk konten dialog */
+.oui-dialog-body .oui-box#oui-wallet-connect-dialog-content {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+
+/* Perbaikan untuk tombol dalam dialog */
+.oui-dialog-body .oui-button {
+  width: 100% !important;
+  height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
 
 /* Tambahkan CSS untuk ResponsiveScaffold */
 .responsive-scaffold-container {

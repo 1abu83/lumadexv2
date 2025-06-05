@@ -17,6 +17,12 @@ export function useNav() {
         return;
       }
 
+      // if (option.href === "/Laman") {
+      //   const symbol = getSymbol();
+      //   navigate(`/Laman`);
+      //   return;
+      // }
+
       if (option.href === "/") {
         const symbol = getSymbol();
         navigate(`/perp/${symbol}${queryString}`);

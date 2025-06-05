@@ -23,6 +23,7 @@ const config: OrderlyConfig = {
     mainNavProps: {
       initialMenu: "/",
       mainMenus: [
+       // { name: "Laman", href: "/" },
         { name: "Trading", href: "/" },
         { name: "Portfolio", href: "/portfolio" },
         { name: "Markets", href: "/markets" },
@@ -51,27 +52,17 @@ const config: OrderlyConfig = {
         ],
       },
     },
-  //   footerProps: {
-  //     telegramUrl: undefined, // Nonaktifkan tautan bawaan
-  //     twitterUrl: undefined, // Nonaktifkan tautan bawaan
-  //     discordUrl: undefined, // Nonaktifkan tautan bawaan
-     
-  //     trailing: null, // Nonaktifkan teks bawaan
-  //   },
-  //   footerStatusBarProps: {
-  //     trailing: null, // Pastikan teks default "Powered by Orderly" tidak muncul
-  //   },
-  // },
+
   footerProps: {
-    telegramUrl: "https://t.me/lumadex",
-    twitterUrl: "https://x.com/luma_dex",
-    discordUrl: "https://discord.gg/lumadex",
+    telegramUrl: "",
+    twitterUrl: "",
+    discordUrl: "",
    
     trailing: (
       <div className="flex items-center">
-        <img src="/lu.svg" alt="Luma DEX" width="24" height="24" className="mr-2" />
+        <img src="/sy.png" alt="SKY-X" width="24" height="24" className="mr-2" />
         <span className="oui-text-2xs oui-text-base-contrast-54">
-          Powered by <a href="https://lumadex.com" target="_blank" rel="noopener noreferrer">LUMADEX</a>
+          Powered by <a href="" target="_blank" rel="noopener noreferrer">SKY-X</a>
         </span>
       </div>
     ),
@@ -80,10 +71,10 @@ const config: OrderlyConfig = {
   orderlyAppProvider: {
     appIcons: {
       main: {
-        img: "/or.svg",
+        img: "/sy.png",
       },
       secondary: {
-        img: "/o.svg",
+        img: "",
       },
     },
   },
