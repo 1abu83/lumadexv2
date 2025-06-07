@@ -26,9 +26,8 @@ const config: OrderlyConfig = {
        // { name: "Laman", href: "/" },
         { name: "Trading", href: "/" },
         { name: "Portfolio", href: "/portfolio" },
-        { name: "Markets", href: "/markets" },
-        { name: "Create", href: "/create" },
-        { name: "Spot", href: "/spot" },
+        {name:"create", href:"/craete"},
+        { name: "Spot", href: "https://testproject-2d7fb.web.app/burn" },
         { name: "Launchpad", href: "/launchpad" },
       ],
       campaigns: {
