@@ -70,7 +70,7 @@ const config: OrderlyConfig = {
 
       trailing: (
         <div className="flex items-center">
-          <img src="/or.png" alt="SKY-X" width="24" height="24" className="mr-2" />
+          <img src="/lu.svg" alt="SKY-X" width="24" height="24" className="mr-2" />
           <span className="oui-text-2xs oui-text-base-contrast-54">
             Powered by <a href="" target="_blank" rel="noopener noreferrer">LUMADEX</a>
           </span>
@@ -81,10 +81,10 @@ const config: OrderlyConfig = {
   orderlyAppProvider: {
     appIcons: {
       main: {
-        img: "/or.png",
+        img: "/or.svg",
       },
       secondary: {
-        img: "o",
+        img: "",
       },
     },
   },
