@@ -1,148 +1,152 @@
-import ResponsiveScaffold from "@/components/ResponsiveScaffold";
-import config from "@/utils/config";
-import { useNav } from "@/hooks/useNav";
-import styles from '../styles/spot.module.css';
-import '../styles/spot.css';
 
-const Spot = () => {
-  const { onRouteChange } = useNav();
 
+
+
+
+export default function SpotPro() {
   return (
-    <ResponsiveScaffold
-      mainNavProps={{
-        ...config.scaffold.mainNavProps,
-        initialMenu: "/spot",
-      }}
-      footerProps={config.scaffold.footerProps}
-      currentPath="/spot"
-    >
-      <div className={styles.spotContainer}>
-        <div className="trading-layout">
-          {/* Header dengan informasi pair dan harga */}
-          <div className="trading-header">
-            <div className="pair-info">
-              <h2>LAUNCHCOIN</h2>
-              <div className="price-info">
-                <span className="current-price">$0.14345</span>
-                <span className="price-change positive">+31.91%</span>
-              </div>
-            </div>
-            <div className="trading-actions">
-              <button className="action-btn buy-btn">Buy</button>
-              <button className="action-btn sell-btn">Sell</button>
-            </div>
-          </div>
 
-          {/* Area grafik utama */}
-          <div className="chart-container">
-            <div className="chart-placeholder">Chart Area</div>
-          </div>
+    <div className="w-full h-[calc(100vh-64px)]"> {/* 64px = tinggi navbar */}
+      <iframe
+        src="https://testproject-2d7fb.web.app/spot-pro"
+        className="w-full h-full border-none"
+        loading="lazy"
+        title="spotpro"
+      />
+    </div>
 
-          {/* Panel order dan informasi */}
-          <div className="trading-panels">
-            {/* Panel kiri - Order Form */}
-            <div className="order-panel">
-              <div className="panel-header">
-                <div className="tab-group">
-                  <button className="tab-btn active">Instant</button>
-                  <button className="tab-btn">Trigger</button>
-                  <button className="tab-btn">Recurring</button>
-                </div>
-              </div>
-              <div className="panel-content">
-                <div className="order-form">
-                  <div className="form-group">
-                    <label>Selling</label>
-                    <div className="input-with-select">
-                      <input type="text" placeholder="0.00" />
-                      <select>
-                        <option>SOL</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label>Buying</label>
-                    <div className="input-with-select">
-                      <input type="text" placeholder="0.00" />
-                      <select>
-                        <option>LAUNCHCOIN</option>
-                      </select>
-                    </div>
-                  </div>
-                  <button className="connect-wallet-btn">Connect</button>
-                </div>
-              </div>
-            </div>
-
-            {/* Panel kanan - Transactions */}
-            <div className="transactions-panel">
-              <div className="panel-header">
-                <div className="tab-group">
-                  <button className="tab-btn active">Transactions</button>
-                  <button className="tab-btn">History</button>
-                  <button className="tab-btn">Orders</button>
-                </div>
-              </div>
-              <div className="panel-content">
-                <table className="transactions-table">
-                  <thead>
-                    <tr>
-                      <th>Time/Age</th>
-                      <th>Type</th>
-                      <th>Price</th>
-                      <th>Volume</th>
-                      <th>Trader</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {/* Baris data akan diisi dari backend */}
-                    <tr>
-                      <td>7s</td>
-                      <td className="buy-type">Buy</td>
-                      <td>$0.14345</td>
-                      <td>1.7K</td>
-                      <td>MTL_VWX</td>
-                    </tr>
-                    <tr>
-                      <td>30s</td>
-                      <td className="buy-type">Buy</td>
-                      <td>$0.14291</td>
-                      <td>1.0K</td>
-                      <td>MTL_VWX</td>
-                    </tr>
-                    <tr>
-                      <td>37s</td>
-                      <td className="buy-type">Buy</td>
-                      <td>$0.14290</td>
-                      <td>899.88</td>
-                      <td>MTL_VWX</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          {/* Informasi tambahan */}
-          <div className="market-info">
-            <div className="info-card">
-              <h3>Community Metrics</h3>
-              <div className="metrics-content">
-                <div className="metric-item">
-                  <span className="metric-label">24h Volume</span>
-                  <span className="metric-value">$1.63M</span>
-                </div>
-                <div className="metric-item">
-                  <span className="metric-label">Market Cap</span>
-                  <span className="metric-value">$3.54M</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </ResponsiveScaffold>
   );
-};
+}
 
-export default Spot;
+// Kode yang dikomentari dihapus untuk menjaga file tetap bersih
+// import { useEffect, useRef } from 'react';
+// import { createChart, AreaSeries, CandlestickSeries, createTextWatermark } from 'lightweight-charts';
+
+// export default function ChartPage() {
+//   const chartContainerRef = useRef(null);
+
+//   useEffect(() => {
+//     if (chartContainerRef.current) {
+//       // Buat chart dengan opsi dasar
+//       const chartOptions = {
+//         layout: {
+//           textColor: 'white',
+//           background: {
+//             type: 'solid',
+//             color: '#1e1e2d'
+//           }
+//         },
+//         grid: {
+//           vertLines: {
+//             color: 'rgba(197, 203, 206, 0.1)',
+//           },
+//           horzLines: {
+//             color: 'rgba(197, 203, 206, 0.1)',
+//           },
+//         },
+//         width: chartContainerRef.current.clientWidth,
+//         height: 500,
+//       };
+
+//       const chart = createChart(chartContainerRef.current, chartOptions);
+
+//       // Tambahkan area series
+//       const areaSeries = chart.addSeries(AreaSeries, {
+//         lineColor: '#2962FF',
+//         topColor: '#2962FF',
+//         bottomColor: 'rgba(41, 98, 255, 0.28)',
+//       });
+
+//       // Set data untuk area series
+//       areaSeries.setData([
+//         { time: '2018-12-22', value: 32.51 },
+//         { time: '2018-12-23', value: 31.11 },
+//         { time: '2018-12-24', value: 27.02 },
+//         { time: '2018-12-25', value: 27.32 },
+//         { time: '2018-12-26', value: 25.17 },
+//         { time: '2018-12-27', value: 28.89 },
+//         { time: '2018-12-28', value: 25.46 },
+//         { time: '2018-12-29', value: 23.92 },
+//         { time: '2018-12-30', value: 22.68 },
+//         { time: '2018-12-31', value: 22.67 },
+//       ]);
+
+//       // Tambahkan candlestick series
+//       const candlestickSeries = chart.addSeries(CandlestickSeries, {
+//         upColor: '#26a69a',
+//         downColor: '#ef5350',
+//         borderVisible: false,
+//         wickUpColor: '#26a69a',
+//         wickDownColor: '#ef5350',
+//       });
+
+//       // Set data untuk candlestick series
+//       candlestickSeries.setData([
+//         { time: '2018-12-22', open: 75.16, high: 82.84, low: 36.16, close: 45.72 },
+//         { time: '2018-12-23', open: 45.12, high: 53.90, low: 45.12, close: 48.09 },
+//         { time: '2018-12-24', open: 60.71, high: 60.71, low: 53.39, close: 59.29 },
+//         { time: '2018-12-25', open: 68.26, high: 68.26, low: 59.04, close: 60.50 },
+//         { time: '2018-12-26', open: 67.71, high: 105.85, low: 66.67, close: 91.04 },
+//         { time: '2018-12-27', open: 91.04, high: 121.40, low: 82.70, close: 111.40 },
+//         { time: '2018-12-28', open: 111.51, high: 142.83, low: 103.34, close: 131.25 },
+//         { time: '2018-12-29', open: 131.33, high: 151.17, low: 77.68, close: 96.43 },
+//         { time: '2018-12-30', open: 106.33, high: 110.20, low: 90.39, close: 98.10 },
+//         { time: '2018-12-31', open: 109.87, high: 114.69, low: 85.66, close: 111.26 },
+//       ]);
+
+//       // Sesuaikan skala waktu agar semua data terlihat
+//       chart.timeScale().fitContent();
+
+//       // Tambahkan watermark dengan nama LumaDex
+//       const firstPane = chart.panes()[0];
+//       const textWatermark = createTextWatermark(firstPane, {
+//         horzAlign: 'center',
+//         vertAlign: 'center',
+//         lines: [
+//           {
+//             text: 'LumaDex',
+//             color: 'rgba(255, 255, 255, 0.15)',
+//             fontSize: 48,
+//             fontFamily: 'Arial, sans-serif',
+//             fontStyle: 'bold',
+//           },
+//         ],
+//       });
+
+//       // Tambahkan event listener untuk resize
+//       const handleResize = () => {
+//         chart.applyOptions({ width: chartContainerRef.current.clientWidth });
+//       };
+
+//       window.addEventListener('resize', handleResize);
+
+//       // Cleanup function
+//       return () => {
+//         window.removeEventListener('resize', handleResize);
+//         chart.remove();
+//       };
+//     }
+//   }, []);
+
+//   return (
+//     <div className="p-4 bg-gray-900 min-h-screen">
+//       <h1 className="text-2xl font-bold mb-6 text-white">LumaDex Chart</h1>
+
+//       <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
+//         <div className="mb-4">
+//           <h2 className="text-xl font-semibold text-white">LUMADEX</h2>
+//           <p className="text-gray-400"></p>
+//         </div>
+
+//         <div
+//           ref={chartContainerRef}
+//           className="w-full h-[500px] rounded-md overflow-hidden"
+//         />
+
+//         <div className="mt-4 text-xs text-gray-500">
+//           Powered by <a href="https://www.tradingview.com/" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">TradingView</a>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }

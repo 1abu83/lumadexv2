@@ -36,5 +36,20 @@ export default defineConfig(() => {
         include: ["buffer", "crypto"],
       }),
     ],
+    server: {
+      proxy: {
+        '/api/orderly': {
+          target: 'https://api.orderly.org',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api\/orderly/, ''),
+          secure: false
+        },
+        '/v1/public/chain_info': {
+          target: 'https://api.orderly.org',
+          changeOrigin: true,
+          secure: false
+        }
+      }
+    },
   };
 });
