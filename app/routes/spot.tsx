@@ -8,7 +8,7 @@ export default function SpotPro() {
 
     <div className="w-full h-[calc(100vh-64px)]"> {/* 64px = tinggi navbar */}
       <iframe
-        src="https://testproject-2d7fb.web.app/spot-pro"
+        src="https://lumadex.fun/spot-pro"
         className="w-full h-full border-none"
         loading="lazy"
         title="spotpro"

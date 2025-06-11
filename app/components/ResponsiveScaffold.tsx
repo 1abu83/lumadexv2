@@ -1,6 +1,5 @@
 import { FC, ReactNode } from "react";
 import { Scaffold } from "@orderly.network/ui-scaffold";
-import MobileNavbar from "./MobileNavbar";
 import { useNav } from "@/hooks/useNav";
 
 interface ResponsiveScaffoldProps {
@@ -20,11 +19,6 @@ const ResponsiveScaffold: FC<ResponsiveScaffoldProps> = ({
 
   return (
     <div className="responsive-scaffold-container">
-      {/* Mobile Navbar - hanya terlihat di mobile */}
-      <div className="mobile-only">
-        <MobileNavbar />
-      </div>
-      
       {/* Scaffold asli dari Orderly */}
       <Scaffold
         mainNavProps={mainNavProps}
